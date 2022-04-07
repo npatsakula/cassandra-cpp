@@ -1,4 +1,6 @@
-{ pkgs ? import <nixpkgs> {}, }:
+{ pkgs ? import <nixpkgs> {}
+, examples ? false
+}:
 
 pkgs.stdenv.mkDerivation rec {
     pname = "cassandra-cpp";
@@ -11,17 +13,17 @@ pkgs.stdenv.mkDerivation rec {
     };
 
     LIBUV_ROOT_DIR = "${pkgs.libuv}/";
-    buildInputs = pkgs.lib.optional pkgs.stdenv.hostPlatform.isUnix pkgs.bash;
     nativeBuildInputs = with pkgs; [
-      zlib
       cmake
-      libuv
-      openssl
+      zlib libuv openssl.dev
     ];
 
-    enableParallelBuilding = true;
-    outputs = [ "dev" "out" ];
+    cmakeFlags = pkgs.lib.attrsets.mapAttrsToList
+      (name: value: "-DCASS_BUILD_${name}:BOOL=${if value then "ON" else "OFF"}") {
+        EXAMPLES = examples;
+      };
 
+    enableParallelBuilding = true;
     meta = with pkgs.lib; {
       description = "DataStax CPP cassandra driver";
       license = with licenses; [ mit ];
