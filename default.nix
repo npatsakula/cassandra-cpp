@@ -26,7 +26,12 @@ pkgs.stdenv.mkDerivation rec {
     enableParallelBuilding = true;
     meta = with pkgs.lib; {
       description = "DataStax CPP cassandra driver";
-      license = with licenses; [ mit ];
+      longDescription = ''
+        A modern, feature-rich and highly tunable C/C++ client
+        library for Apache Cassandra 2.1+ using exclusively Cassandra’s
+        binary protocol and Cassandra Query Language v3.
+      '';
+      license = with licenses; [ asl20 ];
       platforms = platforms.all;
     };
 }
